@@ -50,4 +50,6 @@ Bellabeat має декілька продуктів, але тут я зосе�
 * За необхідності розділив колонки mm.dd.yyyy tt на окремо dd.mm.yyyy та hh:mm;
 
 ### 5. Analyze
-Вже очищені файли я аналізував у BigQuery та Jupyter Notebook. Тут я викладу аналіз за допомогою SQL, а ідентичні кроки, але за допомогою Python викладені тут [AnalysisPython](AnalysisPython.ipynb)
+Вже очищені файли я аналізував у BigQuery та Jupyter Notebook. Тут я викладу аналіз саме за допомогою SQL, а ідентичні кроки, але вже за допомогою Python викладені тут [AnalysisPython](AnalysisPython.ipynb)
+
+З таблиці dailyActivity_merged дізнався середні значення різних змінних
