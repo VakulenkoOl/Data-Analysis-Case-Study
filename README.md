@@ -103,6 +103,8 @@ ORDER BY
 ```
 Результат 
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-05_11-33-00.png)
+
+
 <img width="1189" height="794" alt="image" src="https://github.com/user-attachments/assets/45e34a05-c153-4b0c-84ae-5a10fceff6e9" />
 
 
@@ -136,7 +138,11 @@ order by id
 ```
 Результат 
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-05_12-09-38.png)
+
+
 <img width="1164" height="781" alt="image" src="https://github.com/user-attachments/assets/caeb351c-5397-4516-948e-d04c7f0aa5b7" />
+
+Відсортувавши користувачів за к-стю спалених калорій можемо бачити, що наша вибірка є доволі різноманітною. Користувачі відрізняються не тільки к-стю спалених калорій а і шляхом їхнього спалення. Наприклад, користувач з найбільшою середньою к-стю кроків займає 2 місце, а користувач з найбільшою середньою к-стю хвилин високої інтенсивності займає 3 місце. Тобто середня к-сть спалених калорій - це сукупність різних видів активності, котрі пропорційно впливають на суму значень.
 
 Я розділив людей на категорії за їхнім рівнем активності (за кроками >10к - висока, >5к - середня, решта - низька) з використанням тимчасової таблиці та порахував к-сть людей у кожній категорії та їхнє співвідношення.
 ```sql
@@ -165,4 +171,72 @@ ORDER BY UserCount DESC;
 
 
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-05_13-10-28.png)
+
+
 <img width="1190" height="798" alt="image" src="https://github.com/user-attachments/assets/535b0e0d-720f-4500-858a-a8c86ff464a0" />
+
+Отже, згідно категоризації, з 33 користувачів 54,5% (або 18) є поміркованими, 24,2% (або 8) є малоактивними та 21,2% (або 7) є високоактивними.
+
+Дізнався середню, мінімальну та максимальну к-сть калорій у певну годину впродовж дня з hourlyCalories_merged
+```sql
+SELECT ActivityHour,
+  ROUND(AVG(calories),1) as AverageCalories,
+  ROUND(MIN(calories),1) as MinCalories,
+  ROUND(Max(calories),1) as MaxCalories
+FROM core-almanac-504208-f8.fit_bit.hourlyCalories_merged
+group by ActivityHour
+order by ActivityHour
+```
+Результат
+
+![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_17-29-35.png)
+
+
+<img width="1194" height="794" alt="image" src="https://github.com/user-attachments/assets/b47433e8-1cde-4bac-9325-057b20080baf" />
+
+Середня кількість спалених калорій впродовж дня змінюється згідно життєвого ритму користувачів, а саме: починаючи з 5-ї години стрімко зростає досягаючи піку о 12 годині, згодом о 15:00 спостерігається невелике скорочення, надалі активність знову зростає й утримується на вечірньому плато максимальних значень з 17:00 до 19:00, після чого стрімко скорочується, досягаючи найменшого значення о 3 годині.
+
+Дізнався середню, мінімальну та максимальну к-сть кроків у певну годину впродовж дня з hourlySteps_merged
+```sql
+SELECT ActivityHour,
+  ROUND(AVG(StepTotal,1)) as AverageSteps,
+  ROUND(MIN(StepTotal,1)) as MinSteps,
+  ROUND(MAX(StepTotal,1)) as MaxSteps
+FROM core-almanac-504208-f8.fit_bit.hourlySteps_merged
+group by ActivityHour
+order by ActivityHour
+```
+Результат
+
+![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_17-39-04.png)
+
+
+<img width="1192" height="794" alt="image" src="https://github.com/user-attachments/assets/ffcb1a89-08ee-4842-a809-a43832c3f9e7" />
+
+Середня кількість кроків впродовж дня дещо нагадує динаміку середньої кількості спалених калорій впродовж дня, проте демонструє значно більшу волатильність із різкими піковими стрибками та падіннями. Це пов'язано тим, що ходьба є періодичною активністю, тоді як витрата калорій залишається безперервною навіть під час стану спокою за рахунок базового метаболізму.
+
+Дізнався середні час сну та час у ліжку, середню к-сть записів про сон, а також порахував ефективність сну впродовж тижня з sleepDay_merged
+```sql
+SELECT 
+  DayOfTheWeek,
+  ROUND(AVG(TotalMinutesAsleep), 1) AS AverageMinutesAsleep,
+  ROUND(AVG(TotalTimeInBed), 1) AS AverageTimeInBed,
+  ROUND(AVG(TotalSleepRecords), 1) AS AverageSleepRecords,
+  ROUND(SAFE_DIVIDE(AVG(TotalMinutesAsleep), AVG(TotalTimeInBed)) * 100.0, 1) AS SleepEfficiencyPercentage
+FROM core-almanac-504208-f8.fit_bit.sleepDay_merged
+GROUP BY DayOfTheWeek
+ORDER BY
+  CASE 
+    WHEN DayOfTheWeek LIKE 'пон%' THEN 1
+    WHEN DayOfTheWeek LIKE 'вів%' THEN 2
+    WHEN DayOfTheWeek LIKE 'сер%' THEN 3
+    WHEN DayOfTheWeek LIKE 'чет%' THEN 4
+    WHEN DayOfTheWeek LIKE 'п%'   THEN 5
+    WHEN DayOfTheWeek LIKE 'суб%' THEN 6
+    WHEN DayOfTheWeek LIKE 'нед%' THEN 7
+  END;
+```
+Результат
+
+![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_18-24-37.png)
+
