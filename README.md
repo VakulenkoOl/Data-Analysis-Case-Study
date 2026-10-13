@@ -192,7 +192,8 @@ order by ActivityHour
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_17-29-35.png)
 
 
-<img width="1194" height="794" alt="image" src="https://github.com/user-attachments/assets/b47433e8-1cde-4bac-9325-057b20080baf" />
+<img width="1192" height="791" alt="image" src="https://github.com/user-attachments/assets/1f3c35f6-2c62-4975-a1eb-ecb5a39d36e0" />
+
 
 Середня кількість спалених калорій впродовж дня змінюється згідно життєвого ритму користувачів, а саме: починаючи з 5-ї години стрімко зростає досягаючи піку о 12 годині, згодом о 15:00 спостерігається невелике скорочення, надалі активність знову зростає й утримується на вечірньому плато максимальних значень з 17:00 до 19:00, після чого стрімко скорочується, досягаючи найменшого значення о 3 годині.
 
@@ -211,7 +212,8 @@ order by ActivityHour
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_17-39-04.png)
 
 
-<img width="1192" height="794" alt="image" src="https://github.com/user-attachments/assets/ffcb1a89-08ee-4842-a809-a43832c3f9e7" />
+<img width="1196" height="794" alt="image" src="https://github.com/user-attachments/assets/34ea8e9c-78d3-4309-9881-6f307d747fd1" />
+
 
 Середня кількість кроків впродовж дня дещо нагадує динаміку середньої кількості спалених калорій впродовж дня, проте демонструє значно більшу волатильність із різкими піковими стрибками та падіннями. Це пов'язано тим, що ходьба є періодичною активністю, тоді як витрата калорій залишається безперервною навіть під час стану спокою за рахунок базового метаболізму.
 
@@ -240,3 +242,35 @@ ORDER BY
 
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_18-24-37.png)
 
+
+<img width="1182" height="792" alt="image" src="https://github.com/user-attachments/assets/8ecdddb6-4f3e-40d1-8d75-d9c308ce9944" />
+
+Розділив користувачів за ефективністю сну, та визначив відсоток кожної категорії
+```sql
+WITH UserGroups AS (
+  SELECT 
+    id,
+    ROUND(AVG(TotalMinutesAsleep), 1) AS AverageMinutesAsleep,
+    ROUND(AVG(TotalTimeInBed), 1) AS AverageTimeInBed,
+    CASE
+      when ROUND(SAFE_DIVIDE(AVG(TotalMinutesAsleep), AVG(TotalTimeInBed)) * 100.0, 1) >= 85 then "Good Sleep"
+      when ROUND(SAFE_DIVIDE(AVG(TotalMinutesAsleep), AVG(TotalTimeInBed)) * 100.0, 1) >= 80 then "Normal Sleep"
+      else "Bad Sleep"
+    END AS SleepGroup
+  FROM core-almanac-504208-f8.fit_bit.sleepDay_merged
+  GROUP BY id
+)
+
+SELECT 
+  SleepGroup,
+  COUNT(id) AS UserCount,
+  ROUND(COUNT(id) * 100.0 / SUM(COUNT(id)) OVER(), 1) AS Percentage
+FROM UserGroups
+GROUP BY SleepGroup
+ORDER BY UserCount DESC;
+```
+Результат
+
+![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_18-51-19.png)
+
+<img width="1197" height="800" alt="image" src="https://github.com/user-attachments/assets/828f38e2-b598-4d18-b211-00722063edfe" />
