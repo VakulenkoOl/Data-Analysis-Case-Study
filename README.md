@@ -52,4 +52,49 @@ Bellabeat має декілька продуктів, але тут я зосе�
 ### 5. Analyze
 Вже очищені файли я аналізував у BigQuery та Jupyter Notebook. Тут я викладу аналіз саме за допомогою SQL, а ідентичні кроки, але вже за допомогою Python викладені тут [AnalysisPython](AnalysisPython.ipynb)
 
-З таблиці dailyActivity_merged дізнався середні значення різних змінних
+З файлу dailyActivity_merged дізнався середні значення різних змінних:
+```sql
+SELECT 
+  round(AVG(Calories),1) AS AverageCalories,
+  round(AVG(TotalSteps),1) AS AverageSteps,
+  round(AVG(TotalDistance),1) AS AverageDistance,
+  round(AVG(VeryActiveDistance),1) AS AverageVeryActiveDistance,
+  round(AVG(ModeratelyActiveDistance),1) AS AverageModeratelyActiveDistance,
+  round(AVG(LightActiveDistance),1) AS AverageLightActiveDistance,
+  round(AVG(VeryActiveMinutes),1) AS AverageVeryActiveMinutes,
+  round(AVG(FairlyActiveMinutes),1) AS AverageFairlyActiveMinutes,
+  round(AVG(LightlyActiveMinutes),1) AS AverageLightlyActiveMinutes,
+  round(AVG(SedentaryMinutes),1) AS AverageSedentaryMinutes,
+FROM core-almanac-504208-f8.fit_bit.dailyActivity_merged
+```
+Результат ![середні значення dailyActivity_merged](images/image_2026-10-05_11-17-30.png)
+
+Дізнався середні значення різних змінних відповідно до дня тижня
+```sql
+SELECT 
+  DayOfTheWeek,
+  round(AVG(Calories),1) AS AverageCalories,
+  round(AVG(TotalSteps),1) AS AverageSteps,
+  round(AVG(TotalDistance),1) AS AverageDistance,
+  round(AVG(VeryActiveDistance),1) AS AverageVeryActiveDistance,
+  round(AVG(ModeratelyActiveDistance),1) AS AverageModeratelyActiveDistance,
+  round(AVG(LightActiveDistance),1) AS AverageLightActiveDistance,
+  round(AVG(VeryActiveMinutes),1) AS AverageVeryActiveMinutes,
+  round(AVG(FairlyActiveMinutes),1) AS AverageFairlyActiveMinutes,
+  round(AVG(LightlyActiveMinutes),1) AS AverageLightlyActiveMinutes,
+  round(AVG(SedentaryMinutes),1) AS AverageSedentaryMinutes,
+FROM core-almanac-504208-f8.fit_bit.dailyActivity_merged
+WHERE DayOfTheWeek IS NOT NULL
+GROUP BY DayOfTheWeek
+ORDER BY 
+  CASE 
+    WHEN DayOfTheWeek LIKE 'пон%' THEN 1
+    WHEN DayOfTheWeek LIKE 'вів%' THEN 2
+    WHEN DayOfTheWeek LIKE 'сер%' THEN 3
+    WHEN DayOfTheWeek LIKE 'чет%' THEN 4
+    WHEN DayOfTheWeek LIKE 'п%'   THEN 5
+    WHEN DayOfTheWeek LIKE 'суб%' THEN 6
+    WHEN DayOfTheWeek LIKE 'нед%' THEN 7
+  END
+```
+Результат ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-05_11-33-00.png)
