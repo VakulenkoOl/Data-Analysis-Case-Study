@@ -52,8 +52,9 @@ Bellabeat має декілька продуктів, але тут я зосе�
 ### 5. Analyze
 Вже очищені файли я аналізував у BigQuery та Jupyter Notebook. Тут я викладу аналіз саме за допомогою SQL, а ідентичні кроки, але вже за допомогою Python викладені тут [AnalysisPython](AnalysisPython.ipynb)
 
-Також всі візуалізації я робив за допомогою Tableu. 
-**Інтерактивний дашборд у Tableau[📊 Переглянути інтерактивний дашборд у Tableau Public]([https://public.tableau.com/app/profile/oleksandr.vakulenko/viz/VisualizationofFitBitFitnessTrackerData/Dashboard8](https://public.tableau.com/views/VisualizationofFitBitFitnessTrackerData/Dashboard1?:language=en-GB&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link))**
+Також всі візуалізації я робив за допомогою Tableau. 
+
+[Переглянути інтерактивні дашборди у Tableau Public](https://public.tableau.com/views/VisualizationofFitBitFitnessTrackerData/Dashboard1?:language=en-GB&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
 
 З файлу dailyActivity_merged дізнався середні значення різних змінних:
 ```sql
