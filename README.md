@@ -245,6 +245,9 @@ ORDER BY
 
 <img width="1182" height="792" alt="image" src="https://github.com/user-attachments/assets/8ecdddb6-4f3e-40d1-8d75-d9c308ce9944" />
 
+Отже, час сну з понеділка по четвер та у суботу є приблизно однаковим, натомість п'ятниця - день з найменшим часом сну, а неділя - найбільшим.
+Ефективність сну приблизно однакова впродовж всього тижня, з найбільшим розривом між понеділком та четвергом у 3%.
+
 Розділив користувачів за ефективністю сну, та визначив відсоток кожної категорії
 ```sql
 WITH UserGroups AS (
@@ -274,3 +277,43 @@ ORDER BY UserCount DESC;
 ![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_18-51-19.png)
 
 <img width="1197" height="800" alt="image" src="https://github.com/user-attachments/assets/828f38e2-b598-4d18-b211-00722063edfe" />
+
+Отже, згідно категоризації, з 24 користувачів 91.7% (або 22) мать гарний сон, а  8,3% (або 2) - поганий сон.
+
+Дізнався середню інтенсивність впродовж тижня з hourlyIntensities_merged
+```sql
+SELECT DayOfTheWeek,
+  ROUND(AVG(TotalIntensity),1) as AverageIntensity
+FROM core-almanac-504208-f8.fit_bit.hourlyIntensities_merged
+GROUP BY DayOfTheWeek
+ORDER BY
+  CASE 
+    WHEN DayOfTheWeek LIKE 'пон%' THEN 1
+    WHEN DayOfTheWeek LIKE 'вів%' THEN 2
+    WHEN DayOfTheWeek LIKE 'сер%' THEN 3
+    WHEN DayOfTheWeek LIKE 'чет%' THEN 4
+    WHEN DayOfTheWeek LIKE 'п%'   THEN 5
+    WHEN DayOfTheWeek LIKE 'суб%' THEN 6
+    WHEN DayOfTheWeek LIKE 'нед%' THEN 7
+  END;
+```
+Результат
+
+![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_19-01-04.png)
+
+Дізнався  середню інтенсивність впродовж дня
+```sql
+SELECT ActivityHour,
+  ROUND(AVG(TotalIntensity),1) as AverageIntensity
+FROM core-almanac-504208-f8.fit_bit.hourlyIntensities_merged
+GROUP BY ActivityHour
+ORDER BY ActivityHour
+```
+Результат
+
+![середні значення різних змінних відповідно до дня тижня](images/image_2026-10-06_19-02-48.png)
+
+<img width="1192" height="791" alt="image" src="https://github.com/user-attachments/assets/c12dc65e-6bc3-4eda-8bb6-1f5f9d52c1e4" />
+
+Середня інтенсивність впродовж тижня демонструє зростання з понеділка по середу, що змінює скорочення у четвер з подальшим зростанням до набуття найбільшого значення у суботу, після чого різко скорочується у неділю.
+Середня інтенсивність впродовж дня також дуже схожа з середньою кількістю спалених калорій упродовж дня, проте демонструє значно більшу волатильність із різкими піковими стрибками та падіннями. Окрім того, має скорочення о 11:00, яке не демонструє графік калорій, проте саме за рахунок інтенсивності забеспечується вечірнє плато максимальних значень.
